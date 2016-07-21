@@ -2,6 +2,8 @@ package com.dl7.commonlib.utils;
 
 import android.content.Context;
 import android.util.TypedValue;
+import android.view.View;
+import android.view.ViewGroup;
 
 /**
  * Created by Rukey7 on 2016/7/18.
@@ -20,5 +22,11 @@ public class MeasureUtils {
     public static float sp2px(Context context, float sp) {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp,
                 context.getResources().getDisplayMetrics());
+    }
+
+
+    public static int getMeasuredWidthWithMargins(View child) {
+        final ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) child.getLayoutParams();
+        return child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin;
     }
 }

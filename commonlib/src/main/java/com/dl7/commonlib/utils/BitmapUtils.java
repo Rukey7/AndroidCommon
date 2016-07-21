@@ -15,6 +15,7 @@ package com.dl7.commonlib.utils; /**
  */
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -34,13 +35,17 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader.TileMode;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.VectorDrawable;
 import android.media.ExifInterface;
 import android.os.Build;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.util.Log;
 import android.view.View;
 
@@ -58,6 +63,8 @@ final public class BitmapUtils {
 
     private static final boolean DEBUG = false;
     private static final String TAG = BitmapUtils.class.getSimpleName();
+
+    private static final int COLOR_DRAWABLE_DIMENSION = 2;
 
     /**
      * Don't let anyone instantiate this class.
@@ -296,17 +303,46 @@ final public class BitmapUtils {
      * @param drawable Drawable
      * @return Bitmap
      */
-    public static Bitmap getBitmapFromDrawable(Drawable drawable) {
-        int width = drawable.getIntrinsicWidth();
-        int height = drawable.getIntrinsicHeight();
-        Bitmap bitmap = Bitmap.createBitmap(width, height, drawable
-                .getOpacity() != PixelFormat.OPAQUE ? Config.ARGB_8888
-                : Config.RGB_565);
-        Canvas canvas = new Canvas(bitmap);
-        drawable.setBounds(0, 0, width, height);
-        drawable.draw(canvas);
-        return bitmap;
+//    public static Bitmap getBitmapFromDrawable(Drawable drawable) {
+//        int width = drawable.getIntrinsicWidth();
+//        int height = drawable.getIntrinsicHeight();
+//        Bitmap bitmap = Bitmap.createBitmap(width, height, drawable
+//                .getOpacity() != PixelFormat.OPAQUE ? Config.ARGB_8888
+//                : Config.RGB_565);
+//        Canvas canvas = new Canvas(bitmap);
+//        drawable.setBounds(0, 0, width, height);
+//        drawable.draw(canvas);
+//        return bitmap;
+//    }
 
+    public static Bitmap getBitmapFromDrawable(Drawable drawable) {
+        if (drawable == null) {
+            return null;
+        }
+
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable) drawable).getBitmap();
+        }
+
+        try {
+            Bitmap bitmap;
+
+            if (drawable instanceof ColorDrawable) {
+                bitmap = Bitmap.createBitmap(COLOR_DRAWABLE_DIMENSION, COLOR_DRAWABLE_DIMENSION,
+                        drawable.getOpacity() != PixelFormat.OPAQUE ? Config.ARGB_8888 : Config.RGB_565);
+            } else {
+                bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(),
+                        drawable.getOpacity() != PixelFormat.OPAQUE ? Config.ARGB_8888 : Config.RGB_565);
+            }
+
+            Canvas canvas = new Canvas(bitmap);
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas);
+            return bitmap;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -1689,4 +1725,37 @@ final public class BitmapUtils {
         return rotatedData;
     }
 
+    public static Drawable resizeDrawable(Context context, Drawable drawable, int width, int height) {
+        Bitmap bitmap = getBitmap(drawable, width, height);
+        return new BitmapDrawable(context.getResources(), Bitmap.createScaledBitmap(bitmap, width, height, true));
+    }
+
+    public static Bitmap getBitmap(Drawable drawable, int width, int height) {
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable) drawable).getBitmap();
+        } else if (drawable instanceof VectorDrawableCompat) {
+            return getBitmap((VectorDrawableCompat) drawable, width, height);
+        } else if (drawable instanceof VectorDrawable) {
+            return getBitmap((VectorDrawable) drawable, width, height);
+        } else {
+            throw new IllegalArgumentException("Unsupported drawable type");
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private static Bitmap getBitmap(VectorDrawable vectorDrawable, int width, int height) {
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        vectorDrawable.draw(canvas);
+        return bitmap;
+    }
+
+    private static Bitmap getBitmap(VectorDrawableCompat vectorDrawable, int width, int height) {
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        vectorDrawable.draw(canvas);
+        return bitmap;
+    }
 }
