@@ -1,6 +1,7 @@
 package com.dl7.commonlib.utils;
 
 import android.content.Context;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,5 +29,13 @@ public class MeasureUtils {
     public static int getMeasuredWidthWithMargins(View child) {
         final ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) child.getLayoutParams();
         return child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin;
+    }
+
+    public static DisplayMetrics getDisplayMetrics(Context context) {
+        if (context == null) {
+            return null;
+        }
+        return context.getResources().getDisplayMetrics();
+//        activity.getWindowManager().getDefaultDisplay().getMetrics();
     }
 }
