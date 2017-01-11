@@ -1,6 +1,7 @@
 package com.dl7.commonlib.utils;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
@@ -36,6 +37,17 @@ public class MeasureUtils {
             return null;
         }
         return context.getResources().getDisplayMetrics();
-//        activity.getWindowManager().getDefaultDisplay().getMetrics();
+    }
+
+    /**
+     * 获取字体高度
+     * @param fontSize
+     * @return
+     */
+    public static int getFontHeight(float fontSize) {
+        Paint paint = new Paint();
+        paint.setTextSize(fontSize);
+        Paint.FontMetrics fm = paint.getFontMetrics();
+        return (int) Math.ceil(fm.descent - fm.top) + 2;
     }
 }
