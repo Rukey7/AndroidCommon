@@ -35,11 +35,12 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     public static final float ALPHA_FULL = 1.0f;
+    private static final int INVALID_FLAG = 1 << 7;
 
     private final ItemTouchHelperAdapter mAdapter;
     private boolean mIsDragAndSwipeEnabled = true;
-    private int mDragFlags;
-    private int mSwipeFlags;
+    private int mDragFlags = INVALID_FLAG;
+    private int mSwipeFlags = INVALID_FLAG;
 
     public SimpleItemTouchHelperCallback(ItemTouchHelperAdapter adapter) {
         mAdapter = adapter;
@@ -90,23 +91,23 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
         int swipeFlags;
         if (recyclerView.getLayoutManager() instanceof GridLayoutManager ||
                 recyclerView.getLayoutManager() instanceof StaggeredGridLayoutManager) {
-            if (mDragFlags != 0) {
+            if (mDragFlags != INVALID_FLAG) {
                 dragFlags = mDragFlags;
             } else {
                 dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT;
             }
-            if (mSwipeFlags != 0) {
+            if (mSwipeFlags != INVALID_FLAG) {
                 swipeFlags = mSwipeFlags;
             } else {
                 swipeFlags = ItemTouchHelper.START;
             }
         } else {
-            if (mDragFlags != 0) {
+            if (mDragFlags != INVALID_FLAG) {
                 dragFlags = mDragFlags;
             } else {
                 dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
             }
-            if (mSwipeFlags != 0) {
+            if (mSwipeFlags != INVALID_FLAG) {
                 swipeFlags = mSwipeFlags;
             } else {
                 swipeFlags = ItemTouchHelper.START | ItemTouchHelper.END;
@@ -170,4 +171,5 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
             itemViewHolder.onItemClear();
         }
     }
+
 }

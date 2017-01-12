@@ -334,6 +334,14 @@ public abstract class BaseQuickAdapter<T> extends RecyclerView.Adapter<RecyclerV
             mLoadingDesc = (TextView) mLoadingView.findViewById(R.id.tv_loading_desc);
             mLoadingIcon = (SpinKitView) mLoadingView.findViewById(R.id.iv_loading_icon);
             mLoadingStr = mContext.getResources().getString(R.string.loading_desc);
+            mLoadingDesc.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!mIsLoadingNow && !mIsNoMoreData) {
+                        _loadMore();
+                    }
+                }
+            });
         }
     }
 
@@ -424,7 +432,7 @@ public abstract class BaseQuickAdapter<T> extends RecyclerView.Adapter<RecyclerV
      * @param items
      */
     public void updateItems(List<T> items) {
-        mData = items;
+        mData = new ArrayList<>(items);
         notifyDataSetChanged();
         mIsNoMoreData = false;
     }
@@ -720,7 +728,7 @@ public abstract class BaseQuickAdapter<T> extends RecyclerView.Adapter<RecyclerV
      */
     public void setSwipeFlags(int swipeFlags) {
         if (mDragCallback != null) {
-            mDragCallback.setDragFlags(swipeFlags);
+            mDragCallback.setSwipeFlags(swipeFlags);
         }
     }
 

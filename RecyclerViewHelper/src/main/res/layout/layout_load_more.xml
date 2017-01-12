@@ -14,7 +14,7 @@
         android:layout_height="60dp"
         android:layout_gravity="center"
         android:padding="10dp"
-        app:SpinKit_Color="#f36c60"/>
+        app:SpinKit_Color="#9e9e9e"/>
 
     <TextView
         android:id="@+id/tv_loading_desc"
@@ -24,7 +24,7 @@
         android:layout_marginBottom="10dp"
         android:layout_gravity="center"
         android:gravity="center"
-        android:textColor="#f36c60"
+        android:textColor="@drawable/sel_load_desc"
         android:text="@string/loading_desc"
         android:textSize="18sp"/>
 </LinearLayout>
